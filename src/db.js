@@ -3,31 +3,41 @@
 // On Vercel's serverless runtime the project filesystem is read-only (only /tmp is
 // writable), so we fall back to a writable path there — data persists across warm
 // invocations within a function instance, which is enough for a hackathon demo.
+// src/db.js — SQLite connection + schema (uses Node's built-in node:sqlite)
+// SQLite requires a WRITABLE filesystem. On Vercel's serverless runtime the project
+// filesystem is READ-ONLY, so we must use a writable directory. Strategy:
+//  1. If the default data/ascend.db is on a writable path, use it (local dev).
+//  2. Otherwise fall back to the OS temp directory, which is always writable.
 const { DatabaseSync } = require('node:sqlite');
 const path = require('node:path');
 const fs = require('node:fs');
 const os = require('node:os');
 
-// SQLite needs a WRITABLE filesystem. On Vercel's serverless runtime the project
-// filesystem is READ-ONLY (only /tmp is writable), so we use the OS temp dir there
-// which is guaranteed writable and cross-platform (Linux: /tmp, Windows: C:\\Temp).
-// Locally this defaults to <repo>/data/ascend.db.
-const DB_FILE = process.env.ASCEND_DB ||
-  (process.env.VERCEL === '1' || process.env.VERCEL_URL
-    ? path.join(os.tmpdir(), 'ascend.db')
-    : path.resolve(__dirname, '..', 'data', 'ascend.db'));
+const LOCAL_DB = path.resolve(__dirname, '..', 'data', 'ascend.db');
 
-// Ensure the parent directory of the DB file exists and is writable before opening.
-const DB_DIR = path.dirname(DB_FILE);
-try { fs.mkdirSync(DB_DIR, { recursive: true }); } catch (e) { console.error('[db] mkdir error:', e.message, 'for', DB_DIR, e.stack); throw e; }
-
-let db;
-try {
-  db = new DatabaseSync(DB_FILE);
-} catch (e) {
-  console.error('[db] open error:', e.message, 'for', DB_FILE, 'on', process.platform, 'tmpdir:', os.tmpdir(), 'env:', process.env.ASCEND_DB, 'dirname:', DB_DIR, e.stack);
-  throw e;
+// Test whether the default location is writable by opening a throwaway file.
+function isWritablePath(filePath) {
+  try {
+    fs.accessSync(filePath, fs.constants.W_OK);
+    return true;
+  } catch {
+    return false;
+  }
 }
+
+// Pick a writable location for the SQLite DB.
+let DB_FILE;
+if (isWritablePath(LOCAL_DB)) {
+  DB_FILE = LOCAL_DB;
+} else {
+  // Fall back to the OS temp dir (writable on every platform).
+  DB_FILE = path.join(os.tmpdir(), 'ascend.db');
+}
+
+// Ensure the parent directory exists (scratch writes may need it).
+try { fs.mkdirSync(path.dirname(DB_FILE), { recursive: true }); } catch (e) { /* ignore */ }
+
+const db = new DatabaseSync(DB_FILE);
 module.exports = db;
 db.exec('PRAGMA journal_mode = WAL;');
 db.exec('PRAGMA foreign_keys = ON;');
