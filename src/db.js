@@ -1,12 +1,27 @@
 // src/db.js — SQLite connection + schema (uses Node's built-in node:sqlite)
+// SQLite needs a WRITABLE filesystem. Locally this defaults to <repo>/data/ascend.db.
+// On Vercel's serverless runtime the project filesystem is read-only (only /tmp is
+// writable), so we fall back to a writable path there — data persists across warm
+// invocations within a function instance, which is enough for a hackathon demo.
 const { DatabaseSync } = require('node:sqlite');
 const path = require('node:path');
 const fs = require('node:fs');
+const os = require('node:os');
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
-fs.mkdirSync(DATA_DIR, { recursive: true });
+// SQLite needs a WRITABLE filesystem. On Vercel's serverless runtime the project
+// filesystem is READ-ONLY (only /tmp is writable), so we use the OS temp dir there
+// which is guaranteed writable and cross-platform (Linux: /tmp, Windows: C:\\Temp).
+// Locally this defaults to <repo>/data/ascend.db.
+const DB_FILE = process.env.ASCEND_DB ||
+  (process.env.VERCEL === '1' || process.env.VERCEL_URL
+    ? path.join(os.tmpdir(), 'ascend.db')
+    : path.resolve(__dirname, '..', 'data', 'ascend.db'));
 
-const db = new DatabaseSync(path.join(DATA_DIR, 'ascend.db'));
+// Ensure the parent directory of the DB file exists and is writable before opening.
+const DB_DIR = path.dirname(DB_FILE);
+try { fs.mkdirSync(DB_DIR, { recursive: true }); } catch (e) { /* dir may already exist */ }
+
+const db = new DatabaseSync(DB_FILE);
 db.exec('PRAGMA journal_mode = WAL;');
 db.exec('PRAGMA foreign_keys = ON;');
 
