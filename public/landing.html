@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ascend — AI-Powered Personal Growth Companion</title>
+  <meta name="description" content="Ascend is an AI-powered personal growth companion that holds a living model of who you are and who you want to become, then curates one next-best action every day. No feeds, no guilt — just thoughtful progress." />
+  <meta name="theme-color" content="#5a7d64" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+  <link rel="canonical" href="/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Ascend — AI-Powered Personal Growth Companion" />
+  <meta property="og:description" content="One curated action a day, tied to your identity model. Become who you imagine." />
+  <meta property="og:image" content="/og-image.png" />
+  <meta property="og:url" content="/" />
+  <meta property="og:site_name" content="Ascend" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Ascend — AI-Powered Personal Growth Companion" />
+  <meta name="twitter:description" content="One curated action a day, tied to your identity model." />
+  <meta name="twitter:image" content="/og-image.png" />
+
+  <!-- Fonts & Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "#organization",
+        "name": "Ascend",
+        "url": "/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/og-image.png",
+          "width": 1200,
+          "height": 630
+        },
+        "description": "Ascend is an AI-powered personal growth companion that curates one next-best action per day based on your identity model."
+      },
+      {
+        "@type": "WebSite",
+        "@id": "#website",
+        "url": "/",
+        "name": "Ascend",
+        "publisher": { "@id": "#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Ascend",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web",
+        "description": "An AI-powered personal growth companion that holds a living model of who you are and who you want to become, then curates one next-best action per day.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "AI-powered daily action curation",
+          "Editable identity model",
+          "Gap map generation",
+          "Weekly check-in reflections",
+          "North-star progress metrics",
+          "Built-in curator fallback (no API key needed)"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Ascend?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ascend is an AI-powered personal growth companion that holds a living model of who you are and who you want to become. It curates one next-best action each day — tied to your specific goals, readiness, and recent feedback — so you make steady progress without overwhelm."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does the AI curator work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ascend's AI curator analyzes your identity model (aspiration, current state, values, readiness) and your recent feedback to generate one personalized action per day. It includes a built-in heuristic curator that works without any API key, or you can connect OpenAI, Groq, DeepSeek, or any compatible LLM for richer curation."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need my own API key?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Ascend works out of the box with a built-in curator that needs no API key. You can optionally connect any OpenAI-compatible API (OpenAI, Groq, DeepSeek, Ollama, LM Studio) to power daily curation with a real language model."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my data private?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Ascend stores all your data — identity model, gap map, check-ins, and curated actions — in a local SQLite database on your machine. Your API key is stored in the same local database and never leaves your server. There is no analytics, tracking, or third-party data sharing."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What makes Ascend different from a habit tracker?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Traditional habit trackers optimize for streaks and guilt. Ascend optimizes for human potential: it holds a living identity model, curates one context-aware action per day, adapts to your energy and readiness, and treats rejection as useful signal — not failure."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use Ascend for any area of life?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Ascend is domain-agnostic. You define the area of life you want to grow in — career, health, mindset, creativity, relationships, finances, learning, or anything else. The identity model and gap map adapt to whatever you choose."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does the weekly check-in work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Once a week, Ascend asks you to rate your week (1–5 stars), share your energy level, and optionally write a note. This reflection updates your identity model's readiness level and feeds back into the curator, so tomorrow's thread is smarter and more responsive."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Ascend free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Ascend is open-source and free to use. The built-in curator requires no API key. If you choose to connect a language model for richer curation, you pay only for your own API usage."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "WebPage",
+        "@id": "#webpage",
+        "url": "/",
+        "name": "Ascend — AI-Powered Personal Growth Companion",
+        "isPartOf": { "@id": "#website" },
+        "about": { "@id": "#organization" },
+        "dateModified": "2026-09-01",
+        "breadcrumb": { "@id": "#breadcrumb" }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <div class="grain"></div>
+
+  <!-- Navigation -->
+  <nav class="marketing-nav" aria-label="Main navigation">
+    <div class="brand" style="padding:0">
+      <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit">
+        <div class="brand-mark" aria-hidden="true">▲</div>
+        <div><div class="brand-name">Ascend</div><div class="brand-sub">growth companion</div></div>
+      </a>
+    </div>
+    <div class="marketing-nav-links">
+      <a href="/how-it-works">How it works</a>
+      <a href="/about">About</a>
+      <a class="btn btn-primary btn-sm" href="/" role="button">Open App</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <h1>Become the person you imagine — one small, chosen action at a time.</h1>
+    <p>Ascend holds a living model of who you are and who you want to be, then curates a single next best action every day. No feeds. No guilt. Just a thoughtful companion for personal growth.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative">
+      <a class="btn btn-primary" href="/" role="button" style="padding:14px 28px;font-size:1rem">
+        Start your ascent
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="/how-it-works" role="button" style="padding:14px 28px;font-size:1rem">Learn more</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section section-alt" id="features">
+    <h2 class="section-title">Built for growth, not engagement</h2>
+    <p class="section-sub">Every feature serves your potential — never your screen time.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" aria-hidden="true">🧭</div>
+        <h3>Living Identity Model</h3>
+        <p>A visible, editable model of who you are and who you want to become — not a black box. Your aspiration, values, readiness, and constraints, all in one place.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" aria-hidden="true">🎯</div>
+        <h3>One Action Per Day</h3>
+        <p>No infinite feeds. Just one carefully curated next-best action — sized to your energy, aligned with your goals, and tied to a clear reason why.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" aria-hidden="true">🗺️</div>
+        <h3>AI-Generated Gap Map</h3>
+        <p>Ascend breaks your aspiration into small, concrete steps. Check them off, add your own, or let the AI remap — the gap between who you are and who you're becoming gets smaller.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" aria-hidden="true">💬</div>
+        <h3>Weekly Reflections</h3>
+        <p>A one-minute check-in that updates your readiness, refines the model, and makes every future thread smarter. Rest counts. Rejection counts.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" aria-hidden="true">📊</div>
+        <h3>North-Star Metrics</h3>
+        <p>Goal progress, habit consistency, usefulness rate, and a gap-closure trend — measured honestly, not gamified for engagement.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" aria-hidden="true">🔒</div>
+        <h3>Private by Default</h3>
+        <p>All data stays on your machine in a local SQLite database. No analytics, no tracking, no third-party data sharing. Your growth is yours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works overview -->
+  <section class="section">
+    <h2 class="section-title">The identity loop</h2>
+    <p class="section-sub">A continuous cycle of sensing, modeling, curating, and adapting.</p>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Sense</h3>
+          <p>Tell Ascend who you want to become. Pick a domain, describe your aspiration, share your current habits and energy.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Model</h3>
+          <p>Ascend builds a living identity model — editable and transparent. You see exactly what the AI reasons over.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Curate</h3>
+          <p>Each day, one next-best action is curated from your identity model, gap map, readiness, and recent feedback.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div>
+          <h3>Reflect & Adapt</h3>
+          <p>Your weekly check-in feeds back into the model. Low readiness? Gentle day. High readiness? Time to stretch. The loop gets smarter every week.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section-alt" id="faq">
+    <h2 class="section-title">Frequently asked questions</h2>
+    <p class="section-sub">Everything you need to know about Ascend.</p>
+    <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <button class="faq-q" itemprop="name" aria-expanded="false">What is Ascend?</button>
+        <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <div itemprop="text">
+            <strong>Ascend is an AI-powered personal growth companion that holds a living model of who you are and who you want to become, then curates one next-best action each day.</strong>
+            <p style="margin-top:8px">It works across any area of life — career, health, mindset, creativity, relationships, finances, or anything you choose. The system adapts to your energy, readiness, and recent feedback so every action feels right-sized, not overwhelming.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <button class="faq-q" itemprop="name" aria-expanded="false">How does the AI curator work?</button>
+        <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <div itemprop="text">
+            <strong>Ascend's curator analyzes your identity model — aspiration, current state, values, readiness — and your recent feedback to generate one personalized action per day.</strong>
+            <p style="margin-top:8px">It includes a built-in heuristic curator that works without any API key, so the app is fully functional from day one. You can optionally connect any OpenAI-compatible LLM (OpenAI, Groq, DeepSeek, Ollama, LM Studio) for richer, more nuanced curation. Every curator call is logged so you can see exactly how the AI reasoned.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <button class="faq-q" itemprop="name" aria-expanded="false">Do I need my own API key?</button>
+        <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <div itemprop="text">
+            <strong>No. Ascend works out of the box with its built-in curator — no API key needed.</strong>
+            <p style="margin-top:8px">If you want to power daily curation with a real language model, you can connect any OpenAI-compatible API key through the Settings panel or environment variables. OpenAI, Groq, DeepSeek, Ollama, and LM Studio are all supported.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <button class="faq-q" itemprop="name" aria-expanded="false">Is my data private?</button>
+        <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <div itemprop="text">
+            <strong>Yes. All your data — identity model, gap map, check-ins, curated actions, and API keys — is stored in a local SQLite database on your own machine.</strong>
+            <p style="margin-top:8px">There is no analytics, no tracking, no telemetry, and no third-party data sharing. Your growth journey stays completely private. API keys are stored in the same local database and masked in all responses.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <button class="faq-q" itemprop="name" aria-expanded="false">What makes Ascend different from a habit tracker?</button>
+        <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <div itemprop="text">
+            <strong>Traditional habit trackers optimize for streaks and guilt. Ascend optimizes for human potential.</strong>
+            <p style="margin-top:8px">It holds a living identity model instead of a static checklist. It curates context-aware actions instead of fixed reminders. It adapts to your energy and readiness each day. And it treats rejection as signal, not failure — when something doesn't fit, the system learns and adjusts.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <button class="faq-q" itemprop="name" aria-expanded="false">Can I use Ascend for any area of life?</button>
+        <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <div itemprop="text">
+            <strong>Yes. Ascend is completely domain-agnostic.</strong>
+            <p style="margin-top:8px">You define the area of life you want to grow in. Career, health, mindset, creativity, relationships, finances, learning — or something entirely unique to you. The identity model, gap map, and curator all adapt to your chosen domain.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <button class="faq-q" itemprop="name" aria-expanded="false">How does the weekly check-in work?</button>
+        <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <div itemprop="text">
+            <strong>Once a week, Ascend asks you to rate your week (1–5 stars), share your energy level, and optionally write a reflection note.</strong>
+            <p style="margin-top:8px">This feeds back into your identity model's readiness level and informs the curator's decisions. Low-energy weeks lead to gentler actions; high-energy weeks lead to stretch goals. The model adapts naturally over time.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <button class="faq-q" itemprop="name" aria-expanded="false">Is Ascend free?</button>
+        <div class="faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <div itemprop="text">
+            <strong>Yes. Ascend is open-source and free to use.</strong>
+            <p style="margin-top:8px">The built-in curator requires no API key and no external services. If you choose to connect a language model for richer curation, you pay only for your own API usage with your chosen provider.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:20px;font-size:0.8125rem;color:var(--ink-faint)">
+      Last updated: <time datetime="2026-09-01">September 1, 2026</time>
+    </p>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" style="text-align:center">
+    <h2 class="section-title">Ready to begin?</h2>
+    <p class="section-sub">Start your ascent today. No credit card, no tracking, no complexity.</p>
+    <div style="margin-top:var(--sp-6)">
+      <a class="btn btn-primary" href="/" role="button" style="padding:14px 32px;font-size:1rem">
+        Open Ascend
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="marketing-footer">
+    <p>© 2026 Ascend · An open-source growth companion · <a href="/">Open app</a> · <a href="/about">About</a> · <a href="/how-it-works">How it works</a></p>
+  </footer>
+
+  <script>
+    // FAQ accordion
+    document.querySelectorAll('.faq-q').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        // close all
+        document.querySelectorAll('.faq-item').forEach(i => {
+          i.classList.remove('open');
+          i.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+# Ascend — robots.txt
+# Public marketing pages are open to all crawlers.
+# The app's API and authenticated routes are excluded.
+
+User-agent: *
+Allow: /
+Allow: /landing.html
+Allow: /about.html
+Allow: /how-it-works.html
+Allow: /llms.txt
+Allow: /css/styles.css
+Allow: /js/*
+
+Disallow: /api/
+
+# AI-specific crawlers are welcome on public pages
+User-agent: GPTBot
+Allow: /
+Allow: /llms.txt
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /llms.txt
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+Disallow: /api/
+
+Sitemap: /sitemap.xml
