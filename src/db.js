@@ -19,9 +19,16 @@ const DB_FILE = process.env.ASCEND_DB ||
 
 // Ensure the parent directory of the DB file exists and is writable before opening.
 const DB_DIR = path.dirname(DB_FILE);
-try { fs.mkdirSync(DB_DIR, { recursive: true }); } catch (e) { /* dir may already exist */ }
+try { fs.mkdirSync(DB_DIR, { recursive: true }); } catch (e) { console.error('[db] mkdir error:', e.message, 'for', DB_DIR, e.stack); throw e; }
 
-const db = new DatabaseSync(DB_FILE);
+let db;
+try {
+  db = new DatabaseSync(DB_FILE);
+} catch (e) {
+  console.error('[db] open error:', e.message, 'for', DB_FILE, 'on', process.platform, 'tmpdir:', os.tmpdir(), 'env:', process.env.ASCEND_DB, 'dirname:', DB_DIR, e.stack);
+  throw e;
+}
+module.exports = db;
 db.exec('PRAGMA journal_mode = WAL;');
 db.exec('PRAGMA foreign_keys = ON;');
 
