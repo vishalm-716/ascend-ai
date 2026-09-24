@@ -311,14 +311,22 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong' });
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`Ascend running → http://localhost:${PORT}`);
-});
-server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    console.error(`[server] Port ${PORT} is already in use — another Ascend instance is running.`);
-    console.error(`[server] Stop that instance (or set PORT to a free one) and restart.`);
-  } else {
-    console.error('[server] listen error:', err);
-  }
-});
+// ---------------- server bootstrap ----------------
+// Local dev: listen on the configured port.
+// Vercel (serverless): export `app` so the platform can invoke it as a function.
+if (process.env.VERCEL === '1') {
+  module.exports = app;
+} else {
+  const server = app.listen(PORT, () => {
+    console.log(`Ascend running → http://localhost:${PORT}`);
+  });
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`[server] Port ${PORT} is already in use — another Ascend instance is running.`);
+      console.error(`[server] Stop that instance (or set PORT to a free one) and restart.`);
+    } else {
+      console.error('[server] listen error:', err);
+    }
+  });
+}
+
