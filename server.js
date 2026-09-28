@@ -65,7 +65,7 @@ app.get('/api/auth/google', (req, res) => {
   res.cookie('ascend_oauth_state', state, { httpOnly: true, sameSite: 'lax', path: '/', maxAge: 10 * 60 * 1000, secure: req.secure });
   const redirectUriStr = googleOAuth.redirectUri(req);
   console.log('[google-oauth] starting flow: redirect_uri=%s', redirectUriStr);
-  res.redirect(googleOAuth.authUrl(state, redirectUriStr));
+  res.redirect(googleOAuth.authUrl(state, googleOAuth.signedState(state), redirectUriStr));
 });
 
 // Google redirects here after consent
@@ -76,8 +76,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
   const fail = (msg) => res.redirect(`/?error=${encodeURIComponent(msg)}`);
   // never reflect the raw Google error string back at the client — fixed messages only
   if (googleError) return fail(googleError === 'access_denied' ? 'Sign-in was cancelled' : 'Sign-in failed');
-  const stateOk = Boolean(expected && state && state.length === expected.length &&
-    crypto.timingSafeEqual(Buffer.from(state), Buffer.from(expected)));
+  const stateOk = googleOAuth.verifyState(state, expected);
   if (!code || !stateOk) {
     // Diagnostic detail goes to server logs; the user only sees a fixed message.
     console.error('[google-oauth] state check failed: hasCookie=%s hasState=%s stateLen=%s cookieLen=%s',

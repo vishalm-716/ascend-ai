@@ -21,6 +21,36 @@ function newState() {
   return crypto.randomBytes(24).toString('hex');
 }
 
+// CSRF state is normally verified against a short-lived cookie, but serverless
+// browsers can lose/race that cookie (prefetch, double navigation) and then a
+// perfectly legitimate sign-in dies. So we also SIGN the state with the client
+// secret: if the cookie is gone, a valid signature still proves the state came
+// from us. Verify with either mechanism; both together are belt and braces.
+function signState(state) {
+  return crypto.createHmac('sha256', process.env.GOOGLE_CLIENT_SECRET || 'ascend-dev').update(state).digest('hex').slice(0, 32);
+}
+
+/** State param handed to Google: nonce + our signature. */
+function signedState(state) {
+  return `${state}.${signState(state)}`;
+}
+
+/** True if the callback's state is one we issued (cookie match OR valid signature). */
+function verifyState(stateParam, cookieValue) {
+  if (!stateParam || typeof stateParam !== 'string') return false;
+  const dot = stateParam.lastIndexOf('.');
+  if (dot > 0) {
+    const nonce = stateParam.slice(0, dot);
+    const sig = stateParam.slice(dot + 1);
+    const expectedSig = signState(nonce);
+    if (sig.length === expectedSig.length && crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedSig))) return true;
+  }
+  if (cookieValue && cookieValue.length === stateParam.length) {
+    return crypto.timingSafeEqual(Buffer.from(stateParam), Buffer.from(cookieValue));
+  }
+  return false;
+}
+
 /** The exact redirect URI Google must be told about: <base>/api/auth/google/callback.
  *  Public HTTPS deployments must speak https here — Google compares this string
  *  byte-for-byte against the redirect URIs registered in the OAuth client. */
@@ -38,14 +68,17 @@ function redirectUri(req) {
   return `${base.replace(/\/+$/, '')}/api/auth/google/callback`;
 }
 
-/** Consent-screen URL. `state` is verified on the callback to prevent CSRF. */
-function authUrl(state, redirectUriStr) {
+/** Consent-screen URL. `state` is verified on the callback to prevent CSRF.
+ *  Accepts (nonce, redirectUri) or (nonce, signedState, redirectUri). */
+function authUrl(state, signedStateOrRedirectUri, maybeRedirectUri) {
+  const stateParam = maybeRedirectUri ? signedStateOrRedirectUri : state;
+  const redirectUriStr = maybeRedirectUri || signedStateOrRedirectUri;
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID,
     redirect_uri: redirectUriStr,
     response_type: 'code',
     scope: SCOPES.join(' '),
-    state,
+    state: stateParam,
     access_type: 'online',
     prompt: 'select_account',
   });
@@ -85,4 +118,4 @@ async function fetchProfile(accessToken) {
   return profile; // { id, email, verified_email, name, given_name, picture, locale }
 }
 
-module.exports = { isConfigured, newState, redirectUri, authUrl, exchangeCode, fetchProfile };
+module.exports = { isConfigured, newState, signedState, verifyState, redirectUri, authUrl, exchangeCode, fetchProfile };
