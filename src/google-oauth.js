@@ -21,10 +21,21 @@ function newState() {
   return crypto.randomBytes(24).toString('hex');
 }
 
-/** The exact redirect URI Google must be told about: <base>/api/auth/google/callback */
+/** The exact redirect URI Google must be told about: <base>/api/auth/google/callback.
+ *  Public HTTPS deployments must speak https here — Google compares this string
+ *  byte-for-byte against the redirect URIs registered in the OAuth client. */
 function redirectUri(req) {
-  const base = (process.env.ASCEND_BASE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/+$/, '');
-  return `${base}/api/auth/google/callback`;
+  let base = process.env.ASCEND_BASE_URL;
+  if (!base && req) {
+    base = `${req.protocol}://${req.get('host')}`;
+  }
+  if (!base) base = 'https://localhost:4637';
+  // A plain-http base on a public host would never match Google's records, so
+  // upgrade any non-local http:// base to https://.
+  if (/^http:\/\/\d+\./.test(base) || (/^http:\/\//.test(base) && !/localhost|127\.0\.0\.1/.test(base))) {
+    base = base.replace(/^http:\/\//, 'https://');
+  }
+  return `${base.replace(/\/+$/, '')}/api/auth/google/callback`;
 }
 
 /** Consent-screen URL. `state` is verified on the callback to prevent CSRF. */

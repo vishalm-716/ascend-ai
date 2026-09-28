@@ -15,6 +15,11 @@ const { seedDemo } = require('./src/seed');
 const { weekStartStr, offsetDate } = require('./src/util');
 
 const app = express();
+// Behind Vercel's edge proxy the request arrives as plain HTTP. Trusting the
+// proxy makes Express honor X-Forwarded-Proto, so req.protocol is "https" —
+// otherwise the OAuth redirect_uri we hand Google is http:// and Google
+// rejects the mismatch (redirect_uri must match the registered one exactly).
+app.set('trust proxy', true);
 // PORT=0 or garbage means "pick the default" — some shells export PORT=0 as "unset"
 const PORT = Number(process.env.PORT) || 4637;
 
@@ -57,8 +62,10 @@ app.get('/api/auth/google', (req, res) => {
     return res.status(400).json({ error: 'Google sign-in is not configured yet — add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to .env' });
   }
   const state = googleOAuth.newState();
-  res.cookie('ascend_oauth_state', state, { httpOnly: true, sameSite: 'lax', path: '/', maxAge: 10 * 60 * 1000 });
-  res.redirect(googleOAuth.authUrl(state, googleOAuth.redirectUri(req)));
+  res.cookie('ascend_oauth_state', state, { httpOnly: true, sameSite: 'lax', path: '/', maxAge: 10 * 60 * 1000, secure: req.secure });
+  const redirectUriStr = googleOAuth.redirectUri(req);
+  console.log('[google-oauth] starting flow: redirect_uri=%s', redirectUriStr);
+  res.redirect(googleOAuth.authUrl(state, redirectUriStr));
 });
 
 // Google redirects here after consent
@@ -71,7 +78,12 @@ app.get('/api/auth/google/callback', async (req, res) => {
   if (googleError) return fail(googleError === 'access_denied' ? 'Sign-in was cancelled' : 'Sign-in failed');
   const stateOk = Boolean(expected && state && state.length === expected.length &&
     crypto.timingSafeEqual(Buffer.from(state), Buffer.from(expected)));
-  if (!code || !stateOk) return fail('Sign-in failed: the request did not match (please try again)');
+  if (!code || !stateOk) {
+    // Diagnostic detail goes to server logs; the user only sees a fixed message.
+    console.error('[google-oauth] state check failed: hasCookie=%s hasState=%s stateLen=%s cookieLen=%s',
+      Boolean(expected), Boolean(state), state ? state.length : 0, expected ? expected.length : 0);
+    return fail(!code ? 'Sign-in failed: Google did not return an auth code (please try again)' : 'Sign-in failed: the request did not match (please try again)');
+  }
   try {
     const tokens = await googleOAuth.exchangeCode(code, googleOAuth.redirectUri(req));
     const profile = await googleOAuth.fetchProfile(tokens.access_token);
@@ -82,7 +94,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
     setSessionCookie(res, session.token, session.expires);
     res.redirect('/');
   } catch (err) {
-    console.error('[google-oauth]', err);
+    console.error('[google-oauth] exchange/profile failed: %s (status=%s)', err.message, err.status || 'n/a');
     fail(err.message || 'Sign-in failed');
   }
 });
